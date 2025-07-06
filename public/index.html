@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🗂️ Task Manager</h1>
+
+    <!-- 🌙 Dark Mode Toggle -->
+    <label class="dark-mode-toggle">
+      <input type="checkbox" id="darkModeToggle" />
+      Dark Mode
+    </label>
+
+    <!-- 📋 Form -->
+    <form id="task-form">
+      <input type="text" id="task-input" placeholder="Enter task title" required />
+      <textarea id="task-desc" placeholder="Description (optional)"></textarea>
+      <input type="date" id="task-due" />
+      <select id="task-category">
+        <option value="Personal">Personal</option>
+        <option value="Work">Work</option>
+        <option value="Urgent">Urgent</option>
+        <option value="Others" selected>Others</option>
+      </select>
+      <button type="submit">Add Task</button>
+    </form>
+
+    <!-- 🔍 Filters & Search -->
+    <div class="filter-section">
+      <input type="text" id="searchInput" placeholder="🔍 Search tasks..." />
+      <select id="filterCategory">
+        <option value="All">All Categories</option>
+        <option value="Personal">Personal</option>
+        <option value="Work">Work</option>
+        <option value="Urgent">Urgent</option>
+        <option value="Others">Others</option>
+      </select>
+      <select id="sortTasks">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="a-z">A-Z</option>
+        <option value="z-a">Z-A</option>
+      </select>
+    </div>
+
+    <!-- 📊 Stats -->
+    <div id="task-stats">0 of 0 tasks completed</div>
+    <progress id="task-progress" value="0" max="100"></progress>
+
+    <!-- 📃 Task List -->
+    <ul id="task-list"></ul>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
