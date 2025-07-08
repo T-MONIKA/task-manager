@@ -1,3 +1,5 @@
+const BASE_URL = "https://task-manager-2jgk.onrender.com/api/tasks";
+
 const taskForm = document.getElementById("task-form");
 const taskInput = document.getElementById("task-input");
 const taskDesc = document.getElementById("task-desc");
@@ -28,7 +30,7 @@ if (localStorage.getItem("darkMode") === "true") {
 
 // 🔄 Fetch Tasks
 async function fetchTasks() {
-  const res = await fetch(`/api/tasks?search=${searchInput.value}&category=${filterCategory.value}&sortBy=${sortTasks.value}`);
+  const res = await fetch(`${BASE_URL}?search=${searchInput.value}&category=${filterCategory.value}&sortBy=${sortTasks.value}`);
   tasks = await res.json();
   renderTasks();
 }
@@ -42,7 +44,7 @@ taskForm.addEventListener("submit", async (e) => {
     dueDate: taskDue.value,
     category: taskCategory.value
   };
-  await fetch("/api/tasks", {
+  await fetch(BASE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(task)
@@ -88,7 +90,7 @@ function renderTasks() {
 
 // ✅ Toggle Complete
 async function toggleComplete(id, checkbox) {
-  await fetch(`/api/tasks/${id}`, {
+  await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ completed: checkbox.checked })
@@ -98,7 +100,7 @@ async function toggleComplete(id, checkbox) {
 
 // 🗑 Delete
 async function deleteTask(id) {
-  await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+  await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
   fetchTasks();
 }
 
@@ -109,7 +111,7 @@ async function editTask(id) {
   taskDesc.value = task.description;
   taskDue.value = task.dueDate ? task.dueDate.split("T")[0] : "";
   taskCategory.value = task.category;
-  await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+  await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
   fetchTasks();
 }
 
