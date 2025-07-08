@@ -15,7 +15,8 @@ const filterCategory = document.getElementById("filterCategory");
 const sortTasks = document.getElementById("sortTasks");
 const darkToggle = document.getElementById("darkModeToggle");
 
-const loadingMsg = document.getElementById("loading"); // Add this line
+const loadingText = document.getElementById("loading");
+
 let tasks = [];
 
 // 🌙 Dark Mode
@@ -23,6 +24,7 @@ darkToggle.addEventListener("change", () => {
   document.body.classList.toggle("dark");
   localStorage.setItem("darkMode", document.body.classList.contains("dark"));
 });
+
 if (localStorage.getItem("darkMode") === "true") {
   document.body.classList.add("dark");
   darkToggle.checked = true;
@@ -30,16 +32,18 @@ if (localStorage.getItem("darkMode") === "true") {
 
 // 🔄 Fetch Tasks
 async function fetchTasks() {
-  loadingMsg.style.display = "block";
+  loadingText.style.display = "block";
+  taskList.innerHTML = "";
   try {
-    const res = await fetch(`${BASE_URL}/api/tasks?search=${searchInput.value}&category=${filterCategory.value}&sortBy=${sortTasks.value}`);
+    const res = await fetch(
+      `${BASE_URL}/api/tasks?search=${searchInput.value}&category=${filterCategory.value}&sortBy=${sortTasks.value}`
+    );
     tasks = await res.json();
-  } catch (err) {
-    console.error("❌ Failed to fetch tasks:", err);
-  } finally {
-    loadingMsg.style.display = "none";
     renderTasks();
+  } catch (err) {
+    taskList.innerHTML = "<p>⚠️ Failed to fetch tasks</p>";
   }
+  loadingText.style.display = "none";
 }
 
 // ➕ Add Task
@@ -49,19 +53,38 @@ taskForm.addEventListener("submit", async (e) => {
     title: taskInput.value,
     description: taskDesc.value,
     dueDate: taskDue.value,
-    category: taskCategory.value
+    category: taskCategory.value,
   };
-  await fetch(`${BASE_URL}/api/tasks`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(task)
-  });
-  alert("✅ Task added successfully!");
-  taskInput.value = "";
-  taskDesc.value = "";
-  taskDue.value = "";
-  taskCategory.value = "Others";
-  fetchTasks();
+
+  loadingText.textContent = "Adding task...";
+  loadingText.style.display = "block";
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/tasks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(task),
+    });
+
+    if (res.ok) {
+      loadingText.textContent = "✅ Task added!";
+      setTimeout(() => {
+        loadingText.style.display = "none";
+        loadingText.textContent = "⏳ Loading tasks...";
+      }, 1500);
+
+      taskInput.value = "";
+      taskDesc.value = "";
+      taskDue.value = "";
+      taskCategory.value = "Others";
+
+      fetchTasks();
+    } else {
+      throw new Error("Failed to add task");
+    }
+  } catch (err) {
+    loadingText.textContent = "❌ Failed to add task";
+  }
 });
 
 // 🖼 Render UI
@@ -69,7 +92,7 @@ function renderTasks() {
   taskList.innerHTML = "";
   let completed = 0;
 
-  tasks.forEach(task => {
+  tasks.forEach((task) => {
     const li = document.createElement("li");
     if (task.completed) li.classList.add("done");
 
@@ -100,7 +123,7 @@ async function toggleComplete(id, checkbox) {
   await fetch(`${BASE_URL}/api/tasks/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ completed: checkbox.checked })
+    body: JSON.stringify({ completed: checkbox.checked }),
   });
   fetchTasks();
 }
@@ -113,7 +136,7 @@ async function deleteTask(id) {
 
 // ✏️ Edit
 async function editTask(id) {
-  const task = tasks.find(t => t._id === id);
+  const task = tasks.find((t) => t._id === id);
   taskInput.value = task.title;
   taskDesc.value = task.description;
   taskDue.value = task.dueDate ? task.dueDate.split("T")[0] : "";
@@ -123,7 +146,7 @@ async function editTask(id) {
 }
 
 // 🔍 Filter/Sort
-[searchInput, filterCategory, sortTasks].forEach(input => {
+[searchInput, filterCategory, sortTasks].forEach((input) => {
   input.addEventListener("input", fetchTasks);
 });
 
