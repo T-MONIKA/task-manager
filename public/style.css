@@ -1,127 +1,171 @@
-:root {
-  --bg: #f9f9f9;
-  --text: #111;
-  --primary: #6c63ff;
-  --secondary: #e0e0e0;
-  --accent: #ffffff;
-  --danger: #e74c3c;
-  --success: #2ecc71;
-}
-
-body.dark {
-  --bg: #1e1e1e;
-  --text: #f1f1f1;
-  --primary: #8c82ff;
-  --secondary: #333;
-  --accent: #2a2a2a;
+/* ==== Base Reset ==== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  transition: background 0.3s, color 0.3s;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  min-height: 100vh;
+  padding: 20px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .container {
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
-  background-color: var(--accent);
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
 }
 
+/* ==== Headings ==== */
 h1 {
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: var(--primary);
+  margin-bottom: 25px;
+  font-size: 2.2rem;
 }
 
-/* Dark mode toggle */
-.dark-mode-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-  font-weight: bold;
+/* ==== Dark Mode ==== */
+body.dark {
+  background-color: #121212;
+  color: #f2f2f2;
 }
 
-.dark-mode-toggle input {
-  margin-right: 0.5rem;
+body.dark .container {
+  background-color: #1e1e1e;
+  color: #f2f2f2;
 }
 
-/* Form */
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background-color: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+body.dark button {
+  background-color: #444;
+  color: #fff;
+}
+
+body.dark progress::-webkit-progress-value {
+  background-color: #4caf50;
+}
+
+/* ==== Form ==== */
 form {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  margin-bottom: 1.5rem;
+  gap: 12px;
+  margin-bottom: 25px;
 }
 
-form input,
-form textarea,
-form select,
-form button {
-  padding: 0.6rem 0.8rem;
+input,
+textarea,
+select {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
   font-size: 1rem;
-  border: 1px solid var(--secondary);
-  border-radius: 8px;
-  background-color: var(--bg);
-  color: var(--text);
+  outline: none;
+  width: 100%;
 }
 
-form button {
-  background-color: var(--primary);
-  color: #fff;
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+button[type="submit"] {
+  padding: 12px;
+  border-radius: 10px;
+  background-color: #4caf50;
+  color: white;
   border: none;
   cursor: pointer;
-  transition: background 0.3s;
+  font-weight: bold;
+  transition: background 0.3s ease;
 }
 
-form button:hover {
-  background-color: #554fd8;
+button[type="submit"]:hover {
+  background-color: #43a047;
 }
 
-/* Filter section */
+/* ==== Dark Mode Toggle ==== */
+.dark-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+/* ==== Filters ==== */
 .filter-section {
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
-.filter-section input,
-.filter-section select {
-  flex: 1;
-  min-width: 150px;
+/* ==== Task Stats ==== */
+#task-stats {
+  font-weight: bold;
+  margin: 10px 0;
 }
 
-/* Task list */
-ul#task-list {
-  list-style: none;
-  padding: 0;
-}
-
-.task-item {
-  background: var(--secondary);
-  padding: 1rem;
+/* ==== Progress ==== */
+progress {
+  width: 100%;
+  height: 18px;
+  margin-bottom: 20px;
   border-radius: 10px;
-  margin-bottom: 1rem;
-  position: relative;
-  transition: transform 0.2s ease, background 0.3s ease;
-  animation: fadeIn 0.5s ease;
 }
 
-.task-item:hover {
-  transform: scale(1.01);
+progress::-webkit-progress-bar {
+  background-color: #eee;
+  border-radius: 10px;
 }
 
+progress::-webkit-progress-value {
+  background-color: #4caf50;
+  border-radius: 10px;
+}
+
+/* ==== Task List ==== */
+#task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#task-list li {
+  background: #f1f1f1;
+  border-radius: 15px;
+  padding: 15px 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+body.dark #task-list li {
+  background-color: #2e2e2e;
+}
+
+/* ==== Task Info ==== */
 .task-title {
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .task-title.done {
@@ -129,93 +173,59 @@ ul#task-list {
   color: gray;
 }
 
-.task-details {
-  margin-top: 0.5rem;
+/* ==== Details ==== */
+.task-details p {
   font-size: 0.95rem;
+  color: #555;
 }
 
+body.dark .task-details p {
+  color: #ccc;
+}
+
+/* ==== Buttons ==== */
 button.delete-btn,
 button.edit-btn {
-  position: absolute;
-  top: 1rem;
-  right: 2.5rem;
-  background: transparent;
+  background-color: transparent;
   border: none;
   cursor: pointer;
   font-size: 1.2rem;
+  margin-left: 10px;
+  transition: transform 0.2s;
 }
 
-button.edit-btn {
-  right: 1rem;
+button.delete-btn:hover {
+  color: red;
+  transform: scale(1.2);
 }
 
-#task-stats {
-  font-weight: bold;
-  margin-top: 1rem;
-  margin-bottom: 0.3rem;
+button.edit-btn:hover {
+  color: dodgerblue;
+  transform: scale(1.2);
 }
 
-progress {
-  width: 100%;
-  height: 16px;
-  border-radius: 8px;
-  appearance: none;
+/* ==== Checkbox Label ==== */
+label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-progress::-webkit-progress-bar {
-  background-color: var(--secondary);
-  border-radius: 8px;
-}
-
-progress::-webkit-progress-value {
-  background-color: var(--primary);
-  border-radius: 8px;
-}
-
-/* Loader */
+/* ==== Loading Text ==== */
 #loading {
-  text-align: center;
   font-style: italic;
-  color: var(--primary);
-  margin-top: 2rem;
+  text-align: center;
+  font-size: 1rem;
+  color: gray;
 }
 
-/* Toast Message */
-.toast {
-  position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
-  background-color: var(--success);
-  color: #fff;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  z-index: 999;
-  animation: slideIn 0.4s ease;
-}
-
-.toast.error {
-  background-color: var(--danger);
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
+/* ==== Responsive ==== */
+@media (max-width: 600px) {
+  .filter-section {
+    flex-direction: column;
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
+  form {
+    gap: 8px;
   }
 }
