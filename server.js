@@ -8,20 +8,21 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// ✅ Serve the frontend files from "public" folder
+// ✅ Serve static frontend files from "public" folder
 app.use(express.static("public"));
 
-// ✅ Handle API routes
+// ✅ API route for tasks
 app.use("/api/tasks", taskRoutes);
 
-// ✅ Connect to MongoDB and start the server
+// ✅ Connect to MongoDB and start server
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
 .then(() => {
-  app.listen(5000, () => {
-    console.log("✅ Server running at http://localhost:5000");
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`✅ Server running at http://localhost:${PORT}`);
   });
 })
 .catch((err) => {
