@@ -15,6 +15,7 @@ const filterCategory = document.getElementById("filterCategory");
 const sortTasks = document.getElementById("sortTasks");
 const darkToggle = document.getElementById("darkModeToggle");
 
+const loadingMsg = document.getElementById("loading"); // Add this line
 let tasks = [];
 
 // 🌙 Dark Mode
@@ -22,7 +23,6 @@ darkToggle.addEventListener("change", () => {
   document.body.classList.toggle("dark");
   localStorage.setItem("darkMode", document.body.classList.contains("dark"));
 });
-
 if (localStorage.getItem("darkMode") === "true") {
   document.body.classList.add("dark");
   darkToggle.checked = true;
@@ -30,9 +30,16 @@ if (localStorage.getItem("darkMode") === "true") {
 
 // 🔄 Fetch Tasks
 async function fetchTasks() {
-  const res = await fetch(`${BASE_URL}/api/tasks?search=${searchInput.value}&category=${filterCategory.value}&sortBy=${sortTasks.value}`);
-  tasks = await res.json();
-  renderTasks();
+  loadingMsg.style.display = "block";
+  try {
+    const res = await fetch(`${BASE_URL}/api/tasks?search=${searchInput.value}&category=${filterCategory.value}&sortBy=${sortTasks.value}`);
+    tasks = await res.json();
+  } catch (err) {
+    console.error("❌ Failed to fetch tasks:", err);
+  } finally {
+    loadingMsg.style.display = "none";
+    renderTasks();
+  }
 }
 
 // ➕ Add Task
@@ -49,6 +56,7 @@ taskForm.addEventListener("submit", async (e) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(task)
   });
+  alert("✅ Task added successfully!");
   taskInput.value = "";
   taskDesc.value = "";
   taskDue.value = "";
@@ -59,7 +67,6 @@ taskForm.addEventListener("submit", async (e) => {
 // 🖼 Render UI
 function renderTasks() {
   taskList.innerHTML = "";
-
   let completed = 0;
 
   tasks.forEach(task => {
