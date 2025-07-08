@@ -33,16 +33,11 @@ if (localStorage.getItem("darkMode") === "true") {
 // 🔄 Fetch Tasks
 async function fetchTasks() {
   loadingText.style.display = "block";
-  taskList.innerHTML = "";
-  try {
-    const res = await fetch(
-      `${BASE_URL}/api/tasks?search=${searchInput.value}&category=${filterCategory.value}&sortBy=${sortTasks.value}`
-    );
-    tasks = await res.json();
-    renderTasks();
-  } catch (err) {
-    taskList.innerHTML = "<p>⚠️ Failed to fetch tasks</p>";
-  }
+  taskList.innerHTML = ""; // clear before fetching
+
+  const res = await fetch(`${BASE_URL}/api/tasks?search=${searchInput.value}&category=${filterCategory.value}&sortBy=${sortTasks.value}`);
+  tasks = await res.json();
+  renderTasks();
   loadingText.style.display = "none";
 }
 
@@ -53,47 +48,36 @@ taskForm.addEventListener("submit", async (e) => {
     title: taskInput.value,
     description: taskDesc.value,
     dueDate: taskDue.value,
-    category: taskCategory.value,
+    category: taskCategory.value
   };
 
-  loadingText.textContent = "Adding task...";
-  loadingText.style.display = "block";
+  const response = await fetch(`${BASE_URL}/api/tasks`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(task)
+  });
 
-  try {
-    const res = await fetch(`${BASE_URL}/api/tasks`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(task),
-    });
-
-    if (res.ok) {
-      loadingText.textContent = "✅ Task added!";
-      setTimeout(() => {
-        loadingText.style.display = "none";
-        loadingText.textContent = "⏳ Loading tasks...";
-      }, 1500);
-
-      taskInput.value = "";
-      taskDesc.value = "";
-      taskDue.value = "";
-      taskCategory.value = "Others";
-
-      fetchTasks();
-    } else {
-      throw new Error("Failed to add task");
-    }
-  } catch (err) {
-    loadingText.textContent = "❌ Failed to add task";
+  if (response.ok) {
+    showToast("✅ Task added successfully!");
+    taskInput.value = "";
+    taskDesc.value = "";
+    taskDue.value = "";
+    taskCategory.value = "Others";
+    fetchTasks();
+  } else {
+    showToast("❌ Failed to add task. Try again.", true);
   }
 });
 
 // 🖼 Render UI
 function renderTasks() {
   taskList.innerHTML = "";
+
   let completed = 0;
 
-  tasks.forEach((task) => {
+  tasks.forEach(task => {
     const li = document.createElement("li");
+    li.classList.add("task-item");
     if (task.completed) li.classList.add("done");
 
     li.innerHTML = `
@@ -110,6 +94,7 @@ function renderTasks() {
       <button class="edit-btn" onclick="editTask('${task._id}')">✏️</button>
     `;
 
+    li.classList.add("fade-in");
     taskList.appendChild(li);
     if (task.completed) completed++;
   });
@@ -123,7 +108,7 @@ async function toggleComplete(id, checkbox) {
   await fetch(`${BASE_URL}/api/tasks/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ completed: checkbox.checked }),
+    body: JSON.stringify({ completed: checkbox.checked })
   });
   fetchTasks();
 }
@@ -136,7 +121,7 @@ async function deleteTask(id) {
 
 // ✏️ Edit
 async function editTask(id) {
-  const task = tasks.find((t) => t._id === id);
+  const task = tasks.find(t => t._id === id);
   taskInput.value = task.title;
   taskDesc.value = task.description;
   taskDue.value = task.dueDate ? task.dueDate.split("T")[0] : "";
@@ -146,9 +131,18 @@ async function editTask(id) {
 }
 
 // 🔍 Filter/Sort
-[searchInput, filterCategory, sortTasks].forEach((input) => {
+[searchInput, filterCategory, sortTasks].forEach(input => {
   input.addEventListener("input", fetchTasks);
 });
+
+// 🎉 Toast Message
+function showToast(message, isError = false) {
+  const toast = document.createElement("div");
+  toast.className = `toast ${isError ? "error" : "success"}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
 
 // 🚀 Start
 fetchTasks();
